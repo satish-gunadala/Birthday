@@ -30,6 +30,24 @@ const images = [
 function App() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [carouselIndex, setCarouselIndex] = useState(0)
+  const [imageSources, setImageSources] = useState({})
+
+  useEffect(() => {
+    // Import images dynamically
+    const importImages = async () => {
+      const sources = {}
+      for (const img of images) {
+        try {
+          const module = await import(`../Images/${img}`)
+          sources[img] = module.default
+        } catch (e) {
+          console.warn(`Could not import ${img}`)
+        }
+      }
+      setImageSources(sources)
+    }
+    importImages()
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -46,16 +64,23 @@ function App() {
     setCarouselIndex((prev) => (prev + 1) % images.length)
   }
 
+  const currentHeroImage = imageSources[images[currentImageIndex]]
+  const currentCarouselImage = imageSources[images[carouselIndex]]
+
   return (
     <div className="app-container">
       {/* Hero Section with Rotating Image */}
       <header className="app-header">
         <div className="hero-section">
-          <img 
-            src={`/Images/${images[currentImageIndex]}`}
-            alt="Memory"
-            className="hero-image"
-          />
+          {currentHeroImage ? (
+            <img 
+              src={currentHeroImage}
+              alt="Memory"
+              className="hero-image"
+            />
+          ) : (
+            <div className="loading-placeholder">Loading your memories...</div>
+          )}
           <div className="hero-overlay">
             <h1>💕 Happy Birthday to You! 💕</h1>
             <p>A collection of our beautiful memories together</p>
@@ -72,11 +97,15 @@ function App() {
               ❮
             </button>
             <div className="carousel-image-wrapper">
-              <img 
-                src={`/Images/${images[carouselIndex]}`}
-                alt={`Memory ${carouselIndex + 1}`}
-                className="carousel-image"
-              />
+              {currentCarouselImage ? (
+                <img 
+                  src={currentCarouselImage}
+                  alt={`Memory ${carouselIndex + 1}`}
+                  className="carousel-image"
+                />
+              ) : (
+                <div className="loading-placeholder">Loading...</div>
+              )}
               <div className="image-counter">
                 {carouselIndex + 1} / {images.length}
               </div>
@@ -102,11 +131,15 @@ function App() {
           <div className="gallery-grid">
             {images.map((image, index) => (
               <div key={index} className="gallery-item">
-                <img 
-                  src={`/Images/${image}`}
-                  alt={`Gallery ${index + 1}`}
-                  className="gallery-image"
-                />
+                {imageSources[image] ? (
+                  <img 
+                    src={imageSources[image]}
+                    alt={`Gallery ${index + 1}`}
+                    className="gallery-image"
+                  />
+                ) : (
+                  <div className="gallery-loading">Loading...</div>
+                )}
                 <div className="gallery-overlay">
                   <span>{index + 1}</span>
                 </div>
