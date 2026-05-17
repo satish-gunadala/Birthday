@@ -3,8 +3,6 @@ import './App.css'
 
 const images = [
   'IMG_0463.JPG',
-  'IMG_0939.jpg',
-  'IMG_0942.jpg',
   'IMG_1982.jpg',
   'IMG_1987.jpg',
   'IMG_2002.JPG',
@@ -28,142 +26,161 @@ const images = [
 ]
 
 function App() {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [carouselIndex, setCarouselIndex] = useState(0)
-  const [imageSources, setImageSources] = useState({})
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [showProposal, setShowProposal] = useState(false)
+  const [answer, setAnswer] = useState(null)
+  const [isPlaying, setIsPlaying] = useState(true)
 
   useEffect(() => {
-    // Import images dynamically
-    const importImages = async () => {
-      const sources = {}
-      for (const img of images) {
-        try {
-          const module = await import(`../Images/${img}`)
-          sources[img] = module.default
-        } catch (e) {
-          console.warn(`Could not import ${img}`)
-        }
-      }
-      setImageSources(sources)
-    }
-    importImages()
-  }, [])
+    if (showProposal) return
 
-  useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % images.length)
-    }, 5000)
+      setCurrentIndex((prev) => {
+        const next = (prev + 1) % images.length
+        if (next === 0) {
+          // After all images shown once, show proposal
+          setTimeout(() => setShowProposal(true), 1000)
+          return prev
+        }
+        return next
+      })
+    }, 4000)
+
     return () => clearInterval(interval)
-  }, [])
+  }, [showProposal])
 
-  const goToPrevious = () => {
-    setCarouselIndex((prev) => (prev - 1 + images.length) % images.length)
+  const handleYes = () => {
+    setAnswer('yes')
   }
 
-  const goToNext = () => {
-    setCarouselIndex((prev) => (prev + 1) % images.length)
+  const handleNo = () => {
+    setAnswer('no')
   }
 
-  const currentHeroImage = imageSources[images[currentImageIndex]]
-  const currentCarouselImage = imageSources[images[carouselIndex]]
+  const imagePath = `../Images/${images[currentIndex]}`
+
+  if (showProposal) {
+    return (
+      <div className="proposal-container" style={{
+        backgroundImage: 'url(../Images/propose.png)',
+        backgroundSize: 'contain',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        backgroundRepeat: 'no-repeat'
+      }}>
+        {answer === null && (
+          <>
+            <div className="proposal-content">
+              <h1 className="proposal-title">💍 Will You Marry Me? 💍</h1>
+              <p className="proposal-text">
+                Every moment with you has been the most beautiful journey of my life.
+                You make me smile, you make me laugh, and you make me believe in forever.
+                I want to spend the rest of my days with you.
+              </p>
+              <div className="proposal-buttons">
+                <button className="btn btn-yes" onClick={handleYes}>
+                  YES! 💕
+                </button>
+                <button className="btn btn-no" onClick={handleNo}>
+                  Maybe Later
+                </button>
+              </div>
+            </div>
+            <div className="floating-hearts">
+              {[...Array(15)].map((_, i) => (
+                <div key={i} className="heart">💕</div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {answer === 'yes' && (
+          <div className="celebration">
+            <div className="celebration-inner">
+              <h1>🎉 YES! YES! YES! 🎉</h1>
+              <p className="celebration-thank">Thank you for saying YES! 💕</p>
+              
+              <div className="love-quotes">
+                <p className="quote">
+                  "I love you more than any words could ever express. 
+                  You are my today and all my tomorrows." 💑
+                </p>
+                <p className="quote-separator">✨ 💍 ✨</p>
+                <p className="quote">
+                  "Together, we will create beautiful memories and 
+                  build a love story that lasts forever." 🌹
+                </p>
+                <p className="quote-separator">💫 💕 💫</p>
+                <p className="quote">
+                  "In this life, I want to grow old with you. 
+                  I want to witness all your beautiful tomorrows." 🥰
+                </p>
+              </div>
+
+              <p className="celebration-final">You've made me the happiest person alive! 💕✨</p>
+            </div>
+            <div className="confetti">
+              {[...Array(30)].map((_, i) => (
+                <div key={i} className="confetti-piece">🎊</div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {answer === 'no' && (
+          <div className="try-again">
+            <h1>🥺 Are you sure?</h1>
+            <button className="btn btn-yes" onClick={() => setAnswer(null)}>
+              Let me reconsider 💭
+            </button>
+          </div>
+        )}
+      </div>
+    )
+  }
 
   return (
-    <div className="app-container">
-      {/* Hero Section with Rotating Image */}
-      <header className="app-header">
-        <div className="hero-section">
-          {currentHeroImage ? (
-            <img 
-              src={currentHeroImage}
-              alt="Memory"
-              className="hero-image"
-            />
-          ) : (
-            <div className="loading-placeholder">Loading your memories...</div>
-          )}
-          <div className="hero-overlay">
-            <h1>💕 Happy Birthday to You! 💕</h1>
-            <p>A collection of our beautiful memories together</p>
-          </div>
+    <div className="slideshow-container">
+      <div className="slideshow-wrapper">
+        <img
+          src={imagePath}
+          alt={`Memory ${currentIndex + 1}`}
+          className="slideshow-image"
+          key={currentIndex}
+        />
+        <div className="image-counter">
+          {currentIndex + 1} / {images.length}
         </div>
-      </header>
+        
+        <div className="image-controls">
+          <button
+            className="control-btn"
+            onClick={() => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)}
+          >
+            ❮ Previous
+          </button>
+          <button
+            className="control-btn"
+            onClick={() => setIsPlaying(!isPlaying)}
+          >
+            {isPlaying ? '⏸ Pause' : '▶ Play'}
+          </button>
+          <button
+            className="control-btn"
+            onClick={() => setCurrentIndex((prev) => (prev + 1) % images.length)}
+          >
+            Next ❯
+          </button>
+        </div>
+      </div>
 
-      <main className="app-main">
-        {/* Carousel Section */}
-        <section className="carousel-section">
-          <h2>✨ Our Story in Pictures ✨</h2>
-          <div className="carousel-container">
-            <button className="carousel-btn prev" onClick={goToPrevious}>
-              ❮
-            </button>
-            <div className="carousel-image-wrapper">
-              {currentCarouselImage ? (
-                <img 
-                  src={currentCarouselImage}
-                  alt={`Memory ${carouselIndex + 1}`}
-                  className="carousel-image"
-                />
-              ) : (
-                <div className="loading-placeholder">Loading...</div>
-              )}
-              <div className="image-counter">
-                {carouselIndex + 1} / {images.length}
-              </div>
-            </div>
-            <button className="carousel-btn next" onClick={goToNext}>
-              ❯
-            </button>
-          </div>
-        </section>
+      <audio autoPlay loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
+      </audio>
 
-        {/* Message Section */}
-        <section className="message-section">
-          <h2>💌 A Special Message</h2>
-          <p>
-            Every moment with you is precious. These photos capture the joy, 
-            laughter, and love we share. Here's to many more beautiful memories! 🎉
-          </p>
-        </section>
-
-        {/* Gallery Grid */}
-        <section className="gallery-section">
-          <h2>📸 Memory Gallery 📸</h2>
-          <div className="gallery-grid">
-            {images.map((image, index) => (
-              <div key={index} className="gallery-item">
-                {imageSources[image] ? (
-                  <img 
-                    src={imageSources[image]}
-                    alt={`Gallery ${index + 1}`}
-                    className="gallery-image"
-                  />
-                ) : (
-                  <div className="gallery-loading">Loading...</div>
-                )}
-                <div className="gallery-overlay">
-                  <span>{index + 1}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Celebration Section */}
-        <section className="celebration-section">
-          <h2>🎂 Let's Celebrate! 🎂</h2>
-          <div className="celebration-content">
-            <p>You deserve all the happiness in the world!</p>
-            <div className="emoji-celebration">
-              🎉 🎈 🎁 🌹 💝 ✨ 🎊
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <footer className="app-footer">
-        <p>Made with 💕 for someone special</p>
-        <p>&copy; 2026 Birthday App</p>
-      </footer>
+      <div className="slideshow-footer">
+        <p>💕 A Journey Through Our Love 💕</p>
+      </div>
     </div>
   )
 }
