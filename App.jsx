@@ -113,7 +113,7 @@ function App() {
                 <p className="quote-separator">💫 💕 💫</p>
                 <p className="quote">
                   "In this life, I want to grow old with you. 
-                  I want to witness all your beautiful tomorrows." 🥰
+                  I want to witness all your beautiful tomorrows. - With Love "Satish"" 🥰
                 </p>
               </div>
 
