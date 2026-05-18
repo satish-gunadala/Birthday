@@ -57,12 +57,12 @@ function App() {
     setAnswer('no')
   }
 
-  const imagePath = `../Images/${images[currentIndex]}`
+  const imagePath = `/Images/${images[currentIndex]}`
 
   if (showProposal) {
     return (
       <div className="proposal-container" style={{
-        backgroundImage: 'url(../Images/propose.png)',
+        backgroundImage: 'url(/Images/propose.png)',
         backgroundSize: 'contain',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
