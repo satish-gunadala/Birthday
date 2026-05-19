@@ -27,19 +27,20 @@ const images = [
 
 function App() {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [showBirthdayGreeting, setShowBirthdayGreeting] = useState(false)
   const [showProposal, setShowProposal] = useState(false)
   const [answer, setAnswer] = useState(null)
   const [isPlaying, setIsPlaying] = useState(true)
 
   useEffect(() => {
-    if (showProposal) return
+    if (showBirthdayGreeting || showProposal) return
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => {
         const next = (prev + 1) % images.length
         if (next === 0) {
-          // After all images shown once, show proposal
-          setTimeout(() => setShowProposal(true), 1000)
+          // After all images shown once, show birthday greeting
+          setTimeout(() => setShowBirthdayGreeting(true), 1000)
           return prev
         }
         return next
@@ -47,7 +48,7 @@ function App() {
     }, 4000)
 
     return () => clearInterval(interval)
-  }, [showProposal])
+  }, [showBirthdayGreeting, showProposal])
 
   const handleYes = () => {
     setAnswer('yes')
@@ -59,6 +60,29 @@ function App() {
 
   const imagePath = `/Images/${images[currentIndex]}`
 
+  // Birthday Greeting Page
+  if (showBirthdayGreeting && !showProposal) {
+    return (
+      <div className="birthday-container">
+        <div className="birthday-content">
+          <h2 className="birthday-wish">🎂 Happy Birthday, Babe! 🎂</h2>
+          <p className="birthday-full-message">
+            This is your last birthday as my girlfriend.
+            <br />
+            <span className="birthday-highlight">Next year, Let's celebrate as husband and wife! 💍</span>
+          </p>
+          <button 
+            className="btn btn-proceed"
+            onClick={() => setShowProposal(true)}
+          >
+            Continue to the Special Moment ➜
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // Proposal Page
   if (showProposal) {
     return (
       <div className="proposal-container" style={{
@@ -70,14 +94,6 @@ function App() {
       }}>
         {answer === null && (
           <>
-            <div className="birthday-greeting">
-              <h2 className="birthday-wish">🎂 Happy Birthday, Babe! 🎂</h2>
-              <p className="birthday-message">
-                This is your last birthday as my girlfriend.
-                <br />
-                <span className="birthday-highlight">Next year, Let's celebrate as husband and wife! 💍</span>
-              </p>
-            </div>
             <div className="proposal-content">
               <h1 className="proposal-title">💍 Will You Marry Me? 💍</h1>
               <p className="proposal-text">
