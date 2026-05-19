@@ -70,6 +70,14 @@ function App() {
       }}>
         {answer === null && (
           <>
+            <div className="birthday-greeting">
+              <h2 className="birthday-wish">🎂 Happy Birthday, Babe! 🎂</h2>
+              <p className="birthday-message">
+                This is your last birthday as my girlfriend.
+                <br />
+                <span className="birthday-highlight">Next year, Let's celebrate as husband and wife! 💍</span>
+              </p>
+            </div>
             <div className="proposal-content">
               <h1 className="proposal-title">💍 Will You Marry Me? 💍</h1>
               <p className="proposal-text">

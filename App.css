@@ -123,6 +123,69 @@ body {
   z-index: 2;
 }
 
+.birthday-greeting {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  text-align: center;
+  animation: slideDown 0.8s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateX(-50%) translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+.birthday-wish {
+  font-size: 2.5rem;
+  color: white;
+  margin-bottom: 1rem;
+  text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
+  font-family: 'Poppins', 'Fredoka', sans-serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.birthday-message {
+  font-size: 1.2rem;
+  color: white;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+  font-family: 'Quicksand', 'Fredoka', sans-serif;
+  font-weight: 500;
+  line-height: 1.6;
+  max-width: 600px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1rem 2rem;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.birthday-highlight {
+  display: block;
+  margin-top: 0.5rem;
+  font-weight: 700;
+  color: #ffd700;
+  font-size: 1.3rem;
+  animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.9);
+  }
+}
+
 .proposal-content {
   text-align: center;
   color: white;
