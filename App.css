@@ -198,6 +198,7 @@ body {
   max-width: 700px;
   border: 2px solid rgba(255, 255, 255, 0.2);
   font-family: 'Fredoka', 'Quicksand', sans-serif;
+  margin-top: 200px;
 }
 
 @keyframes slideInUp {
